@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const CategoryCard = ({ category }) => {
-  const { idCategory, strCategory, strCategoryThumb, strCategoryDescription } = category;
+  const { strCategory, strCategoryThumb, strCategoryDescription } = category;
 
   return (
     <Link to={`/category/${strCategory}`} className="block group">

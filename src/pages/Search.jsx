@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SearchBar } from '../components/common';
 import { MealList } from '../components/meal';
@@ -13,21 +13,7 @@ const Search = () => {
 
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  useEffect(() => {
-    const query = searchParams.get('q');
-    const letter = searchParams.get('letter');
-
-    if (query) {
-      handleSearch(query);
-    } else if (letter) {
-      handleLetterFilter(letter);
-    } else {
-      // Load some default meals
-      handleSearch('');
-    }
-  }, []);
-
-  const handleSearch = async (query) => {
+  const handleSearch = useCallback(async (query) => {
     setSearchQuery(query);
     setSelectedLetter('');
     setLoading(true);
@@ -47,9 +33,9 @@ const Search = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setSearchParams]);
 
-  const handleLetterFilter = async (letter) => {
+  const handleLetterFilter = useCallback(async (letter) => {
     setSelectedLetter(letter);
     setSearchQuery('');
     setLoading(true);
@@ -64,7 +50,21 @@ const Search = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setSearchParams]);
+
+  useEffect(() => {
+    const query = searchParams.get('q');
+    const letter = searchParams.get('letter');
+
+    if (query) {
+      handleSearch(query);
+    } else if (letter) {
+      handleLetterFilter(letter);
+    } else {
+      // Load some default meals
+      handleSearch('');
+    }
+  }, [searchParams, handleSearch, handleLetterFilter]);
 
   return (
     <div className="page-container">
